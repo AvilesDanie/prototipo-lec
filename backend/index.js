@@ -1,30 +1,21 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-require("dotenv").config();
+const express = require('express');
+const connectDB = require('./config/db');
+const userRoutes = require('./routes/userRoutes');
+const exerciseRoutes = require('./routes/exerciseRoutes');
+const executionResultRoutes = require('./routes/executionResultRoutes');
+const codeEvaluationRoutes = require('./routes/codeEvaluationRoutes'); // Importa las rutas de evaluación de código
 
 const app = express();
-const PORT = 4000;
+app.use(express.json());
 
-// Middlewares
-app.use(cors());
-app.use(bodyParser.json());
+connectDB();
 
-// Conexión a MongoDB
-mongoose
-  .connect("mongodb://localhost:27017/prototipo")
-  .then(() => console.log("Conectado a MongoDB"))
-  .catch((err) => console.error("Error conectando a MongoDB:", err));
+app.use('/api', userRoutes);
+app.use('/api', exerciseRoutes);
+app.use('/api', executionResultRoutes);
+app.use('/api', codeEvaluationRoutes); // Agrega las rutas de evaluación de código
 
-
-// Rutas
-const ejerciciosRoutes = require("./routes/ejerciciosRoutes");
-const evaluarRoutes = require("./routes/evaluarRoutes");
-const codewarsRoutes = require("./routes/codewarsRoutes");
-app.use("/api/codewars", codewarsRoutes);
-app.use("/api/ejercicios", ejerciciosRoutes);
-app.use("/api/evaluar", evaluarRoutes);
-
-// Inicio del servidor
-app.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

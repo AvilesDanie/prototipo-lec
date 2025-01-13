@@ -1,27 +1,16 @@
-const axios = require("axios");
+const axios = require('axios');
 
-// Obtener lista de ejercicios completados por el usuario
-const obtenerEjerciciosCompletados = async (req, res) => {
-  const username = req.params.username; // Usuario de Codewars
-  try {
-    const response = await axios.get(`https://www.codewars.com/api/v1/users/${username}/code-challenges/completed?page=0`);
-    res.json(response.data.data); // Devuelve solo la lista de ejercicios
-  } catch (error) {
-    console.error("Error obteniendo ejercicios completados:", error.message);
-    res.status(500).json({ error: "No se pudieron obtener los ejercicios de Codewars" });
-  }
-};
-
-// Obtener los detalles de un ejercicio específico
-const obtenerEjercicioPorID = async (req, res) => {
+// Controlador para obtener un desafío desde la API de Codewars por su ID
+const getChallengeById = async (req, res) => {
   const { id } = req.params;
+
   try {
     const response = await axios.get(`https://www.codewars.com/api/v1/code-challenges/${id}`);
-    res.json(response.data); // Devuelve los detalles del ejercicio
+    res.status(200).json(response.data);
   } catch (error) {
-    console.error(`Error obteniendo el ejercicio con ID ${id}:`, error.message);
-    res.status(404).json({ error: "Ejercicio no encontrado" });
+    console.error('Error fetching from Codewars API:', error);
+    res.status(500).json({ error: 'Error fetching challenge from Codewars' });
   }
 };
 
-module.exports = { obtenerEjerciciosCompletados, obtenerEjercicioPorID };
+module.exports = { getChallengeById };
