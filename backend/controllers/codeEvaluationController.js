@@ -38,8 +38,7 @@ const evaluarCodigo = async (req, res) => {
     case "java":
       if (!codigo.includes("public static void main")) {
         console.log("Agregando estructura básica para Java...");
-        codigoFinal = `
-public class Main {
+        codigoFinal = `public class Main {
     public static void main(String[] args) {
         ${codigo}
     }
@@ -50,8 +49,7 @@ public class Main {
     case "c":
       if (!codigo.includes("int main")) {
         console.log("Agregando estructura básica para C...");
-        codigoFinal = `
-#include <stdio.h>
+        codigoFinal = `#include <stdio.h>
 int main() {
     ${codigo}
     return 0;
@@ -62,8 +60,7 @@ int main() {
     case "c++":
       if (!codigo.includes("int main")) {
         console.log("Agregando estructura básica para C++...");
-        codigoFinal = `
-#include <iostream>
+        codigoFinal = `#include <iostream>
 using namespace std;
 int main() {
     ${codigo}
