@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { getChallengeById } = require('../controllers/codewarsController');
+const { getCodewarsChallenge } = require('../controllers/codewarsController');
 
-// Ruta para obtener un desafío por ID desde Codewars
-router.get('/codewars/challenge/:id', getChallengeById);
+// Obtener un desafío de Codewars por su ID
+router.get('/codewars/challenge/:id', getCodewarsChallenge);
 
 module.exports = router;
