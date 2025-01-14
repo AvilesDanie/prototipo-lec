@@ -5,6 +5,7 @@ const exerciseRoutes = require('./routes/exerciseRoutes');
 const executionResultRoutes = require('./routes/executionResultRoutes');
 const codewarsRoutes = require('./routes/codewarsRoutes'); // Importar las rutas de Codewars
 const codeEvaluationRoutes = require('./routes/codeEvaluationRoutes'); // Importar las rutas de evaluación
+require('dotenv').config();
 
 const app = express();
 app.use(express.json());
