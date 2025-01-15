@@ -2,12 +2,15 @@ const express = require('express');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const exerciseRoutes = require('./routes/exerciseRoutes');
+const cors = require('cors');
 const executionResultRoutes = require('./routes/executionResultRoutes');
 const codewarsRoutes = require('./routes/codewarsRoutes'); // Importar las rutas de Codewars
 const codeEvaluationRoutes = require('./routes/codeEvaluationRoutes'); // Importar las rutas de evaluación
 require('dotenv').config();
 
 const app = express();
+
+app.use(cors());
 app.use(express.json());
 
 connectDB();
