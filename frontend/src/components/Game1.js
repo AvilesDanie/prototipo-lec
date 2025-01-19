@@ -47,24 +47,35 @@ const Game1Exercise = () => {
     }
   }, [exercise]);
 
+
+
   const handleGameCompletion = async (isWin) => {
-    const experiencePointsEarned = 100; // Suponiendo que el jugador gana 100 puntos por completar el ejercicio
     try {
-      await axios.put(`http://localhost:5000/api/users/progress/${userId}`, {
-        experiencePoints: experiencePointsEarned,
-        idExercice: exerciseId
-      });
-      
-      // Si el jugador ha ganado, mostramos el cuadro con la opción para volver a la lista de ejercicios
+      const payload = {
+        userId, // ID del usuario
+        exerciseId, // ID del ejercicio enviado desde el frontend (probablemente el codewarsId)
+        experiencePoints: isWin ? 100 : 0, // Puntos de experiencia
+        successful: isWin, // Si el ejercicio fue completado con éxito
+      };
+  
+      console.log('Payload enviado al backend:', payload); // Depurar datos enviados
+  
+      const response = await axios.put(`http://localhost:5000/api/users/progress-unified`, payload);
+  
+      console.log('Respuesta del backend:', response.data); // Depurar respuesta del backend
+  
       if (isWin) {
         setGameResult('win');
       } else {
         setGameResult('lose');
       }
     } catch (err) {
-      console.error('Error al actualizar el progreso del usuario');
+      console.error('Error al actualizar el progreso del usuario:', err);
+      console.log('Detalles del error:', err.response?.data || err.message);
     }
   };
+  
+  
 
   const handleLineMove = (fromIndex, toIndex) => {
     const updatedLines = [...lines];

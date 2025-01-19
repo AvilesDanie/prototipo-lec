@@ -29,6 +29,12 @@ const userSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  tagsWithMistakes: [
+    {
+      tag: String,
+      priority: { type: Number, default: 0 } // La prioridad de los ejercicios relacionados con este tag
+    }
+  ],  
 });
 
 module.exports = mongoose.model('User', userSchema);

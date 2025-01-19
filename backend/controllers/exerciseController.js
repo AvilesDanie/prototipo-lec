@@ -1,5 +1,7 @@
 const Exercise = require('../models/exercise');
 const axios = require('axios');
+const User = require('../models/user');
+const mongoose = require('mongoose'); // Importar Mongoose
 
 // Crear un nuevo ejercicio
 const createExercise = async (req, res) => {
@@ -98,4 +100,116 @@ const getExerciseByCodewarsId = async (req, res) => {
   }
 };
 
-module.exports = { createExercise, getExercises, getExerciseById, deleteExercise, getExercisesWithDetails, getExerciseByCodewarsId };
+// Obtener ejercicios recomendados según nivel y etiquetas
+const getRecommendedExercises = async (req, res) => {
+  try {
+    const userId = req.params.userId; // ID del usuario
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    const userLevel = user.level; // Nivel del usuario
+
+    // Obtener ejercicios según nivel (Codewars usa rangos negativos para niveles)
+    const difficultyLevel = `${9 - userLevel} kyu`;
+
+    // Consultar la base de datos para obtener ejercicios del nivel correspondiente
+    let exercises = await Exercise.find({ difficulty: difficultyLevel });
+
+    // Mapear los tags con errores del usuario a un objeto para priorización
+    const mistakeTags = (user.tagsWithMistakes || []).reduce((acc, tagObj) => {
+      acc[tagObj.tag] = tagObj.priority;
+      return acc;
+    }, {});
+
+    // Priorizar ejercicios relacionados con tags con errores
+    exercises = await Promise.all(
+      exercises.map(async (exercise) => {
+        // Obtener datos de la API de Codewars
+        const codewarsResponse = await axios.get(
+          `https://www.codewars.com/api/v1/code-challenges/${exercise.codewarsId}`
+        );
+        const codewarsDetails = codewarsResponse.data;
+
+        // Obtener los tags desde la API de Codewars
+        const exerciseTags = codewarsDetails.tags || [];
+
+        // Calcular la prioridad basada en los tags
+        const priority = exerciseTags.reduce((acc, tag) => acc + (mistakeTags[tag] || 0), 0);
+
+        return {
+          ...exercise.toObject(),
+          name: codewarsDetails.name,
+          description: codewarsDetails.description,
+          tags: exerciseTags,
+          priority, // Prioridad calculada
+        };
+      })
+    );
+
+    // Ordenar los ejercicios por prioridad (de mayor a menor)
+    exercises.sort((a, b) => b.priority - a.priority);
+
+    res.status(200).json(exercises);
+  } catch (error) {
+    console.error('Error al obtener ejercicios recomendados:', error);
+    res.status(500).json({ error: 'Error al obtener ejercicios recomendados' });
+  }
+};
+
+
+
+// Actualizar el progreso del usuario y manejar etiquetas de error
+const updateUserProgressWithTags = async (req, res) => {
+  try {
+    const { userId, exerciseId, successful } = req.body;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    let exercise = await Exercise.findById(exerciseId);
+
+    // Si no encuentras tags en la base de datos, busca en Codewars
+    if (!exercise.tags || exercise.tags.length === 0) {
+      const codewarsResponse = await axios.get(`https://www.codewars.com/api/v1/code-challenges/${exercise.codewarsId}`);
+      exercise.tags = codewarsResponse.data.tags; // Actualiza los tags desde Codewars
+    }
+
+    // Actualizar progreso
+    if (successful) {
+      user.completedChallenges.push(exerciseId);
+
+      // Reducir prioridad de los tags del ejercicio
+      exercise.tags.forEach((tag) => {
+        const tagObj = user.tagsWithMistakes.find((t) => t.tag === tag);
+        if (tagObj) {
+          tagObj.priority = Math.max(tagObj.priority - 1, 0);
+        }
+      });
+    } else {
+      // Aumentar prioridad de los tags del ejercicio en caso de error
+      exercise.tags.forEach((tag) => {
+        const tagObj = user.tagsWithMistakes.find((t) => t.tag === tag);
+        if (tagObj) {
+          tagObj.priority += 1;
+        } else {
+          user.tagsWithMistakes.push({ tag, priority: 1 });
+        }
+      });
+    }
+
+    await user.save();
+    res.status(200).json(user);
+  } catch (error) {
+    console.error('Error al actualizar progreso del usuario:', error);
+    res.status(500).json({ error: 'Error al actualizar progreso del usuario' });
+  }
+};
+
+
+
+module.exports = { createExercise, getExercises, getExerciseById, deleteExercise, getExercisesWithDetails, getExerciseByCodewarsId, getRecommendedExercises, updateUserProgressWithTags  };

@@ -1,4 +1,8 @@
 const User = require('../models/user');
+const mongoose = require('mongoose');
+const Exercise = require('../models/exercise');
+const axios = require('axios'); // Asegúrate de importar axios para hacer solicitudes HTTP
+
 
 // Crear un nuevo usuario
 const createUser = async (req, res) => {
@@ -74,28 +78,77 @@ const updateUser = async (req, res) => {
 };
 
 // Actualizar el nivel y puntos del usuario
-const updateUserProgress = async (req, res) => {
+const updateUserProgressUnified = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { experiencePoints,idExercice} = req.body; // Suponiendo que solo pasas los puntos de experiencia
+    const { userId, exerciseId, experiencePoints, successful } = req.body;
 
-    const user = await User.findById(id);
+    console.log('Datos recibidos en el backend:', req.body);
+
+    const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      console.log('Usuario no encontrado:', userId);
+      return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
+    console.log('Usuario encontrado:', user);
+
+    // Intentar buscar el ejercicio por ObjectId o codewarsId
+    let exercise = await Exercise.findOne({ codewarsId: exerciseId });
+
+    if (!exercise) {
+      console.log('Ejercicio no encontrado:', exerciseId);
+      return res.status(404).json({ message: 'Ejercicio no encontrado' });
+    }
+
+    console.log('Ejercicio encontrado:', exercise);
+
+    // Obtener los detalles del ejercicio desde la API de Codewars
+    const codewarsResponse = await axios.get(
+      `https://www.codewars.com/api/v1/code-challenges/${exercise.codewarsId}`
+    );
+    const tags = codewarsResponse.data.tags || [];
+
+    console.log('Tags obtenidos desde Codewars:', tags);
+
+    // Actualizar puntos de experiencia y nivel
     user.experiencePoints += experiencePoints;
     user.level = Math.floor(user.experiencePoints / 1000);
-    user.completedChallenges.push(idExercice);
-    user.progress = Math.min((user.completedChallenges.length * 100) / 10, 100);  // Asegúrate de que el progreso no supere 100
+    user.completedChallenges.push(exercise._id); // Usar el ObjectId de MongoDB
+    user.progress = Math.min((user.completedChallenges.length * 100) / 10, 100);
+
+    // Manejar los tags en caso de éxito o error
+    if (successful) {
+      tags.forEach((tag) => {
+        const tagObj = user.tagsWithMistakes.find((t) => t.tag === tag);
+        if (tagObj) {
+          tagObj.priority = Math.max(tagObj.priority - 1, 0);
+        }
+      });
+    } else {
+      tags.forEach((tag) => {
+        const tagObj = user.tagsWithMistakes.find((t) => t.tag === tag);
+        if (tagObj) {
+          tagObj.priority += 1;
+        } else {
+          user.tagsWithMistakes.push({ tag, priority: 1 });
+        }
+      });
+    }
 
     await user.save();
-    console.log(req.body); 
+    console.log('Usuario actualizado:', user);
     res.status(200).json(user);
-  } catch (err) {
-    res.status(500).json({ message: 'Error updating user progress', error: err });
+  } catch (error) {
+    console.error('Error al actualizar el progreso del usuario:', error);
+    res.status(500).json({ error: 'Error al actualizar el progreso del usuario' });
   }
 };
 
 
-module.exports = { createUser, getUsers, getUserById, deleteUser, updateUser, updateUserProgress  };
+
+
+
+
+
+
+module.exports = { createUser, getUsers, getUserById, deleteUser, updateUser, updateUserProgressUnified  };

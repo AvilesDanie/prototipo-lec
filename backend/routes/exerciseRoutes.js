@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createExercise, getExercises, getExerciseById, deleteExercise, getExercisesWithDetails, getExerciseByCodewarsId } = require('../controllers/exerciseController');
+const { createExercise, getExercises, getExerciseById, deleteExercise, getExercisesWithDetails, getExerciseByCodewarsId, getRecommendedExercises } = require('../controllers/exerciseController');
 
 // Obtener lista de ejercicios con detalles de Codewars
 router.get('/exercises/details', getExercisesWithDetails);
@@ -20,5 +20,7 @@ router.delete('/exercises/:id', deleteExercise);
 // Obtener ejercicio por codewarsId
 router.get('/exercises/codewars/:codewarsId', getExerciseByCodewarsId);
 
+// Obtener ejercicios recomendados para un usuario
+router.get('/exercises/recommendations/:userId', getRecommendedExercises);
 
 module.exports = router;
