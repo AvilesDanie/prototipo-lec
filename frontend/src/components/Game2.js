@@ -1,7 +1,154 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useParams, useNavigate } from 'react-router-dom';
 
-function Game2() {
-  return <div><h2>Game 2: Complete Code by Dragging Blocks</h2></div>;
-}
+const Game2Exercise = () => {
+  const { exerciseId } = useParams(); // Captura el codewarsId desde la URL
+  const [exercise, setExercise] = useState(null);
+  const [exerciseDetails, setExerciseDetails] = useState(null);
+  const [modifiedCode, setModifiedCode] = useState(''); // Nuevo estado para el código modificado
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [options, setOptions] = useState([]);
+  const [correctLine, setCorrectLine] = useState('');
+  const [selectedOption, setSelectedOption] = useState('');
+  const [gameResult, setGameResult] = useState(null); // Resultado del juego
+  const userId = '67869f7defd086ba28f87d41'; // ID del usuario
+  const navigate = useNavigate();
 
-export default Game2;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const exerciseRes = await axios.get(`http://localhost:5000/api/exercises/codewars/${exerciseId}`);
+        setExercise(exerciseRes.data);
+
+        const exerciseDetailsRes = await axios.get(`http://localhost:5000/api/codewars/challenge/${exerciseId}`);
+        setExerciseDetails(exerciseDetailsRes.data);
+
+        const userRes = await axios.get(`http://localhost:5000/api/users/${userId}`);
+        setUser(userRes.data);
+
+        setLoading(false);
+      } catch (err) {
+        setError('Error al obtener los datos');
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [exerciseId, userId]);
+
+  useEffect(() => {
+    const fetchIncorrectOptions = async () => {
+      try {
+        if (exercise && exercise.answer && exercise.answer.python) {
+          const codeLines = exercise.answer.python.split('\n');
+          const lineIndex = Math.floor(Math.random() * codeLines.length); // Escoger una línea aleatoria
+          setCorrectLine(codeLines[lineIndex]);
+
+          // Obtener líneas aleatorias de otros ejercicios
+          const otherExercisesRes = await axios.get(`http://localhost:5000/api/exercises`);
+          const otherExercises = otherExercisesRes.data.filter((ex) => ex.codewarsId !== exerciseId);
+
+          const incorrectOptions = [];
+          while (incorrectOptions.length < 3 && otherExercises.length > 0) {
+            const randomExercise = otherExercises[Math.floor(Math.random() * otherExercises.length)];
+            const lines = randomExercise.answer.python.split('\n');
+            const randomLine = lines[Math.floor(Math.random() * lines.length)];
+            if (!incorrectOptions.includes(randomLine) && randomLine !== codeLines[lineIndex]) {
+              incorrectOptions.push(randomLine);
+            }
+          }
+
+          // Crear opciones
+          const allOptions = [codeLines[lineIndex], ...incorrectOptions];
+          const shuffledOptions = allOptions.sort(() => Math.random() - 0.5);
+          setOptions(shuffledOptions);
+
+          // Modificar el código para que falte la línea correcta
+          const modifiedLines = [...codeLines];
+          modifiedLines[lineIndex] = '________';
+          setModifiedCode(modifiedLines.join('\n')); // Guardar el código modificado
+        }
+      } catch (err) {
+        console.error('Error al obtener las opciones incorrectas:', err);
+      }
+    };
+
+    fetchIncorrectOptions();
+  }, [exercise]);
+
+  const handleOptionSelect = async (option) => {
+    setSelectedOption(option);
+    if (option === correctLine) {
+      setGameResult('win');
+      await handleGameCompletion(true);
+    } else {
+      setGameResult('lose');
+    }
+  };
+
+  const handleGameCompletion = async (isWin) => {
+    try {
+      const payload = {
+        userId,
+        exerciseId,
+        experiencePoints: isWin ? 100 : 0,
+        successful: isWin,
+      };
+
+      await axios.put(`http://localhost:5000/api/users/progress-unified`, payload);
+    } catch (err) {
+      console.error('Error al actualizar el progreso del usuario:', err);
+    }
+  };
+
+  const restartGame = () => {
+    setGameResult(null);
+    setSelectedOption('');
+  };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+
+  return (
+    <div className="exercise-container">
+      <div className="exercise-info">
+        <h1>{exerciseDetails?.name}</h1>
+        <p>{exerciseDetails?.description}</p>
+      </div>
+
+      <div className="exercise-code">
+        <h2>Python Code</h2>
+        <pre>{modifiedCode || 'Cargando código...'}</pre>
+      </div>
+
+      <div className="options">
+        {options.map((option, index) => (
+          <button
+            key={index}
+            className={`option ${selectedOption === option ? 'selected' : ''}`}
+            onClick={() => handleOptionSelect(option)}
+          >
+            {option}
+          </button>
+        ))}
+      </div>
+
+      {gameResult && (
+        <div className="result-modal">
+          {gameResult === 'win' ? (
+            <p>¡Correcto! Has completado el ejercicio.</p>
+          ) : (
+            <p>¡Incorrecto! Intenta nuevamente.</p>
+          )}
+          <button onClick={restartGame}>Reintentar</button>
+          <button onClick={() => navigate('/game/game2')}>Volver a la lista de ejercicios</button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Game2Exercise;
