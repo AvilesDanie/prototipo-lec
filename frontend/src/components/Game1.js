@@ -165,4 +165,4 @@ const Game1Exercise = () => {
   );
 };
 
-export default Game1Exercise;
+export default  Game1Exercise;
