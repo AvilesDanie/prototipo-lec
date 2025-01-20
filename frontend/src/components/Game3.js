@@ -60,18 +60,30 @@ const Game3 = () => {
       setGameResult('win');
       try {
         await axios.put(`http://localhost:5000/api/users/progress-unified`, {
-          userId, // El ID del usuario
-          exerciseId, // El ID del ejercicio
-          experiencePoints: timeLeft > 15 ? 150 : 100, // Puntos de experiencia
-          successful: selectedSolution === correctSolution // Si la respuesta es correcta
+          userId,
+          exerciseId,
+          experiencePoints: timeLeft > 15 ? 150 : 100, // Más puntos si responde rápido
+          successful: true, // Marcado como exitoso
         });
       } catch (err) {
-        console.error('Error al actualizar el progreso del usuario');
+        console.error('Error al actualizar el progreso del usuario:', err);
+        alert('Error al actualizar el progreso del usuario.');
       }
     } else {
       setGameResult('lose');
+      try {
+        await axios.put(`http://localhost:5000/api/users/progress-unified`, {
+          userId,
+          exerciseId,
+          experiencePoints: 0, // No se ganan puntos al fallar
+          successful: false, // Marcado como fallo
+        });
+      } catch (err) {
+        console.error('Error al registrar el fallo del usuario:', err);
+      }
     }
   };
+  
 
   const goToExerciseList = () => {
     navigate('/game/game3');

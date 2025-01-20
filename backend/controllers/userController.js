@@ -113,7 +113,12 @@ const updateUserProgressUnified = async (req, res) => {
     // Actualizar puntos de experiencia y nivel
     user.experiencePoints += experiencePoints;
     user.level = Math.floor(user.experiencePoints / 1000);
-    user.completedChallenges.push(exercise._id); // Usar el ObjectId de MongoDB
+
+    // Asegurarse de no duplicar desafíos completados
+    if (!user.completedChallenges.includes(exercise._id)) {
+      user.completedChallenges.push(exercise._id);
+    }
+
     user.progress = Math.min((user.completedChallenges.length * 100) / 10, 100);
 
     // Manejar los tags en caso de éxito o error
@@ -143,6 +148,7 @@ const updateUserProgressUnified = async (req, res) => {
     res.status(500).json({ error: 'Error al actualizar el progreso del usuario' });
   }
 };
+
 
 
 
