@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import '../css/Game3.css';  // Importar el archivo CSS
 
 const Game3 = () => {
   const { exerciseId } = useParams();
@@ -22,7 +23,7 @@ const Game3 = () => {
         const solutionRes = await axios.get(`http://localhost:5000/api/exercises/codewars/${exerciseId}`);
         setCorrectSolution(solutionRes.data.answer.python);
 
-        const randomSolutionsRes = await axios.get('http://localhost:5000/api/exercises/random?count=3');
+        const randomSolutionsRes = await axios.get(`http://localhost:5000/api/exercises/random/${exerciseId}`);
         const randomSolutions = randomSolutionsRes.data.map((item) => item.answer.python);
 
         const combinedSolutions = [...randomSolutions, solutionRes.data.answer.python];
@@ -58,9 +59,11 @@ const Game3 = () => {
     if (selectedSolution === correctSolution) {
       setGameResult('win');
       try {
-        await axios.put(`http://localhost:5000/api/users/progress/${userId}`, {
-          experiencePoints: timeLeft > 15 ? 150 : 100, // Más puntos si queda mucho tiempo
-          idExercice: exerciseId
+        await axios.put(`http://localhost:5000/api/users/progress-unified`, {
+          userId, // El ID del usuario
+          exerciseId, // El ID del ejercicio
+          experiencePoints: timeLeft > 15 ? 150 : 100, // Puntos de experiencia
+          successful: selectedSolution === correctSolution // Si la respuesta es correcta
         });
       } catch (err) {
         console.error('Error al actualizar el progreso del usuario');
@@ -86,8 +89,11 @@ const Game3 = () => {
     <div className="game-container">
       <div className="exercise-info">
         <h1>{exercise?.name}</h1>
-        <p>{exercise?.description}</p>
-        <p>Tiempo restante: {timeLeft} segundos</p>
+        <p>{<div>
+      {/* Renderizamos el HTML usando dangerouslySetInnerHTML */}
+      <div dangerouslySetInnerHTML={{ __html: exercise.description }} />
+    </div> || "No Description Available"}</p>
+        <p><strong>Tiempo restante: {timeLeft} segundos</strong></p>
       </div>
 
       <div className="solutions">

@@ -1,0 +1,132 @@
+/* Game1Exercise.css */
+
+/* Contenedor principal */
+.exercise-container {
+    font-family: 'Arial', sans-serif;
+    padding: 20px;
+    background-color: #fafafa;
+    border-radius: 8px;
+    max-width: 1000px;
+    margin: 30px auto;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Información del ejercicio (título y descripción) */
+  .exercise-info {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .exercise-info h1 {
+    font-size: 2rem;
+    color: #333;
+  }
+  
+  .exercise-info p {
+    font-size: 1rem;
+    color: #666;
+  }
+  
+  /* Área del código */
+  .exercise-code {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .exercise-code h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .code-lines {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .code-line {
+    background-color: #e1e1e1;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    width: 80%;
+    text-align: left;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .code-line:hover {
+    background-color: #c1c1c1;
+  }
+  
+  .code-line:active {
+    background-color: #b1b1b1;
+  }
+  
+  /* Botón para completar el ejercicio */
+  .completion-button {
+    margin-top: 30px;
+    text-align: center;
+  }
+  
+  .completion-button button {
+    background-color: #28a745;
+    color: white;
+    font-size: 1rem;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .completion-button button:hover {
+    background-color: #218838;
+  }
+  
+  .completion-button button:focus {
+    outline: none;
+  }
+  
+  /* Modal de resultado */
+  .result-modal {
+    text-align: center;
+    margin-top: 30px;
+  }
+  
+  .result-modal p {
+    font-size: 1.25rem;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .result-modal button {
+    background-color: #007bff;
+    color: white;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .result-modal button:hover {
+    background-color: #0056b3;
+  }
+  
+  .result-modal button:focus {
+    outline: none;
+  }
+  
+  .result-modal button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  

@@ -210,6 +210,32 @@ const updateUserProgressWithTags = async (req, res) => {
   }
 };
 
+const getRandomExercisesExcludingId = async (req, res) => {
+  try {
+    const { codewarsId } = req.params;
 
+    // Obtener todos los ejercicios excepto el que tiene el codewarsId recibido
+    const exercises = await Exercise.find({ codewarsId: { $ne: codewarsId } });
 
-module.exports = { createExercise, getExercises, getExerciseById, deleteExercise, getExercisesWithDetails, getExerciseByCodewarsId, getRecommendedExercises, updateUserProgressWithTags  };
+    if (exercises.length < 3) {
+      return res.status(404).json({ message: 'No hay suficientes ejercicios disponibles' });
+    }
+
+    // Seleccionar tres ejercicios aleatorios
+    const randomExercises = [];
+    while (randomExercises.length < 3) {
+      const randomIndex = Math.floor(Math.random() * exercises.length);
+      const randomExercise = exercises[randomIndex];
+      if (!randomExercises.includes(randomExercise)) {
+        randomExercises.push(randomExercise);
+      }
+    }
+
+    res.status(200).json(randomExercises);
+  } catch (error) {
+    console.error('Error al obtener ejercicios aleatorios:', error);
+    res.status(500).json({ error: 'Error al obtener ejercicios aleatorios' });
+  }
+};
+
+module.exports = { createExercise, getExercises, getExerciseById, deleteExercise, getExercisesWithDetails, getExerciseByCodewarsId, getRecommendedExercises, updateUserProgressWithTags, getRandomExercisesExcludingId  };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import '../css/Game2.css';  // Importar el archivo CSS
 
 const Game2Exercise = () => {
   const { exerciseId } = useParams(); // Captura el codewarsId desde la URL
@@ -116,7 +117,10 @@ const Game2Exercise = () => {
     <div className="exercise-container">
       <div className="exercise-info">
         <h1>{exerciseDetails?.name}</h1>
-        <p>{exerciseDetails?.description}</p>
+        <p>{<div>
+      {/* Renderizamos el HTML usando dangerouslySetInnerHTML */}
+      <div dangerouslySetInnerHTML={{ __html: exerciseDetails.description }} />
+    </div> || "No Description Available"}</p>
       </div>
 
       <div className="exercise-code">

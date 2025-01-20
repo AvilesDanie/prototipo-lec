@@ -1,8 +1,8 @@
-// src/HomePage.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import UserInfo from './UserInfo';
+import '../css/HomePage.css';  // Importa el archivo CSS
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -41,29 +41,41 @@ const HomePage = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
+    <div className="home-container">
       <h1>Choose a Game Mode</h1>
       <div>
-        <button onClick={() => handleGameSelection('game1')}>
+        <button 
+          className="game-mode-button" 
+          onClick={() => handleGameSelection('game1')}
+        >
           Mode 1: Ordering Code Lines
         </button>
-        <p>Description: In this mode, you'll have to order code lines to complete the function.</p>
+        <p className="game-description">Description: In this mode, you'll have to order code lines to complete the function.</p>
       </div>
       <div>
-        <button onClick={() => handleGameSelection('game2')}>
+        <button 
+          className="game-mode-button" 
+          onClick={() => handleGameSelection('game2')}
+        >
           Mode 2: Completing Missing Code
         </button>
-        <p>Description: In this mode, you need to fill in the missing parts of a code snippet.</p>
+        <p className="game-description">Description: In this mode, you need to fill in the missing parts of a code snippet.</p>
       </div>
       <div>
-        <button onClick={() => handleGameSelection('game3')}>
+        <button 
+          className="game-mode-button" 
+          onClick={() => handleGameSelection('game3')}
+        >
           Mode 3: Answer Selection
         </button>
-        <p>Description: In this mode, you need to select the correct answer based on a given problem.</p>
+        <p className="game-description">Description: In this mode, you need to select the correct answer based on a given problem.</p>
       </div>
 
       <div>
-        <button onClick={handleShowUserInfo}>
+        <button 
+          className="user-info-toggle" 
+          onClick={handleShowUserInfo}
+        >
           {showUserInfo ? "Hide User Info" : "Show User Info"}
         </button>
         {showUserInfo && user && <UserInfo user={user} />}

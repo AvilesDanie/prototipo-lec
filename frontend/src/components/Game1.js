@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom'; // Reemplazado useHistory por useNavigate
-
+import { useParams, useNavigate } from 'react-router-dom'; 
+import '../css/Game1.css';  // Importar el archivo CSS
 
 const Game1Exercise = () => {
   const { exerciseId } = useParams(); // Captura el codewarsId desde la URL
@@ -12,7 +12,7 @@ const Game1Exercise = () => {
   const [error, setError] = useState(null);
   const [lines, setLines] = useState([]);
   const [orderedLines, setOrderedLines] = useState([]);
-  const [gameResult, setGameResult] = useState(null);  // Nuevo estado para el resultado del juego
+  const [gameResult, setGameResult] = useState(null); 
   const userId = "67869f7defd086ba28f87d41"; // ID del usuario (puedes obtenerlo dinámicamente)
   const navigate = useNavigate();  // Usamos useNavigate para la navegación
 
@@ -41,29 +41,27 @@ const Game1Exercise = () => {
   useEffect(() => {
     if (exercise && exercise.answer && exercise.answer.python) {
       const codeLines = exercise.answer.python.split('\n');
-      const shuffledLines = [...codeLines].sort(() => Math.random() - 0.5); // Aleatoriza las líneas
+      const shuffledLines = [...codeLines].sort(() => Math.random() - 0.5); 
       setLines(shuffledLines);
-      setOrderedLines(codeLines); // Guardamos las líneas en el orden correcto
+      setOrderedLines(codeLines); 
     }
   }, [exercise]);
-
-
 
   const handleGameCompletion = async (isWin) => {
     try {
       const payload = {
-        userId, // ID del usuario
-        exerciseId, // ID del ejercicio enviado desde el frontend (probablemente el codewarsId)
-        experiencePoints: isWin ? 100 : 0, // Puntos de experiencia
-        successful: isWin, // Si el ejercicio fue completado con éxito
+        userId, 
+        exerciseId, 
+        experiencePoints: isWin ? 100 : 0, 
+        successful: isWin, 
       };
-  
-      console.log('Payload enviado al backend:', payload); // Depurar datos enviados
-  
+
+      console.log('Payload enviado al backend:', payload); 
+
       const response = await axios.put(`http://localhost:5000/api/users/progress-unified`, payload);
-  
-      console.log('Respuesta del backend:', response.data); // Depurar respuesta del backend
-  
+
+      console.log('Respuesta del backend:', response.data); 
+
       if (isWin) {
         setGameResult('win');
       } else {
@@ -74,8 +72,6 @@ const Game1Exercise = () => {
       console.log('Detalles del error:', err.response?.data || err.message);
     }
   };
-  
-  
 
   const handleLineMove = (fromIndex, toIndex) => {
     const updatedLines = [...lines];
@@ -84,22 +80,19 @@ const Game1Exercise = () => {
     setLines(updatedLines);
   };
 
-  // Verifica si las líneas ordenadas son iguales a las originales
   const checkAnswer = () => {
     const userCode = lines.join('\n');
     const correctCode = orderedLines.join('\n');
     return userCode === correctCode;
   };
 
-  // Función para volver a la lista de ejercicios
   const goToExerciseList = () => {
-    navigate('/game/game1');  // Usamos navigate() para redirigir
+    navigate('/game/game1');  
   };
 
-  // Función para reiniciar el juego
   const restartGame = () => {
     setGameResult(null);
-    setLines([...orderedLines].sort(() => Math.random() - 0.5));  // Reordenar las líneas aleatoriamente
+    setLines([...orderedLines].sort(() => Math.random() - 0.5));  
   };
 
   if (loading) return <p>Loading...</p>;
@@ -111,13 +104,14 @@ const Game1Exercise = () => {
 
   return (
     <div className="exercise-container">
-      {/* Contenedor del título y la descripción del ejercicio */}
       <div className="exercise-info">
         <h1>{exerciseDetails.name}</h1>
-        <p>{exerciseDetails.description}</p>
+        <p>{<div>
+      {/* Renderizamos el HTML usando dangerouslySetInnerHTML */}
+      <div dangerouslySetInnerHTML={{ __html: exerciseDetails.description }} />
+    </div> || "No Description Available"}</p>
       </div>
 
-      {/* Contenedor de las líneas de código */}
       <div className="exercise-code">
         <h2>Python Code</h2>
         <div className="code-lines">
@@ -139,14 +133,13 @@ const Game1Exercise = () => {
         </div>
       </div>
 
-      {/* Botón para completar el ejercicio */}
       <div className="completion-button">
         <button 
           onClick={() => {
             if (checkAnswer()) {
-              handleGameCompletion(true);  // Llamar a la función con "true" para indicar que ganó
+              handleGameCompletion(true);  
             } else {
-              handleGameCompletion(false);  // Llamar a la función con "false" para indicar que perdió
+              handleGameCompletion(false);  
               alert('Please try again! The code is not correct.');
             }
           }}
@@ -155,7 +148,6 @@ const Game1Exercise = () => {
         </button>
       </div>
 
-      {/* Mostrar el cuadro de resultado dependiendo de si el usuario ganó o perdió */}
       {gameResult && (
         <div className="result-modal">
           {gameResult === 'win' ? (
