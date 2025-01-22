@@ -13,7 +13,7 @@ const Game1Exercise = () => {
   const [orderedLines, setOrderedLines] = useState([]);
   const [gameResult, setGameResult] = useState(null);
 
-  const userId = "67869f7defd086ba28f87d41"; // ID del usuario (ajustar si es necesario)
+  const { userId } = useParams(); // ID del usuario (ajustar si es necesario)
   const navigate = useNavigate(); // Usamos useNavigate para la navegación
 
   // Obtener detalles del ejercicio y usuario
@@ -80,10 +80,15 @@ const Game1Exercise = () => {
   };
 
   // Funciones de navegación
-  const goToExerciseList = () => navigate('/game/game1');
+  const goToExerciseList = () => navigate(`/user/${userId}/game/game1`);
   const restartGame = () => {
     setGameResult(null);
     setLines([...orderedLines].sort(() => Math.random() - 0.5));
+  };
+
+  const removeTripleBackticksContent = (str) => {
+    // Usamos una expresión regular para encontrar y eliminar contenido entre triple comillas
+    return str.replace(/```[^`]*```/g, '');
   };
 
   if (loading) return <p>Loading...</p>;
@@ -107,7 +112,7 @@ const Game1Exercise = () => {
       <div className="exercise-info">
         <h1>{exerciseDetails?.name || 'Exercise'}</h1>
         <p>
-          <div dangerouslySetInnerHTML={{ __html: exerciseDetails?.description || 'No Description Available' }} />
+          <div dangerouslySetInnerHTML={{ __html: removeTripleBackticksContent(exerciseDetails?.description) || 'No Description Available' }} />
         </p>
       </div>
 

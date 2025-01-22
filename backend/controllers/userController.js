@@ -2,20 +2,45 @@ const User = require('../models/user');
 const mongoose = require('mongoose');
 const Exercise = require('../models/exercise');
 const axios = require('axios'); // Asegúrate de importar axios para hacer solicitudes HTTP
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 
 // Crear un nuevo usuario
 const createUser = async (req, res) => {
+  const { username, email, password, level, experiencePoints, progress } = req.body;
+
+  if (!password) {
+      return res.status(400).json({ message: "La contraseña es obligatoria" });
+  }
+
   try {
-    const { username, level, experiencePoints, completedChallenges, progress } = req.body;
-    const newUser = new User({ username, level, experiencePoints, completedChallenges, progress });
-    await newUser.save();
-    res.status(201).json(newUser);
-  } catch (error) {
-    console.error("Error al crear usuario:", error);
-    res.status(500).json({ error: "Error al crear el usuario" });
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+          return res.status(400).json({ message: "El usuario ya está registrado" });
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      const user = new User({
+          username,
+          email,
+          password: hashedPassword,
+          level,
+          experiencePoints,
+          progress
+      });
+      await user.save();
+
+      res.status(201).json({ message: "Usuario registrado exitosamente" });
+  } catch (err) {
+      res.status(500).json({ error: err.message });
   }
 };
+
+
+
 
 // Obtener todos los usuarios
 const getUsers = async (req, res) => {
@@ -150,6 +175,43 @@ const updateUserProgressUnified = async (req, res) => {
 };
 
 
+const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  // Verificar que se proporcionen el email y la contraseña
+  if (!email || !password) {
+    return res.status(400).json({ message: "Email y contraseña son requeridos" });
+  }
+
+  try {
+    // Buscar el usuario por email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    // Comparar la contraseña proporcionada con la almacenada (cifrada)
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Credenciales inválidas" });
+    }
+
+    // Generar un token JWT con la ID del usuario
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+    if (!process.env.JWT_SECRET) {
+      throw new Error('La clave secreta no está configurada en .env');
+    }
+    // Enviar el token al cliente
+    console.log(user);
+    res.json({userId:user._id,token, message: "Inicio de sesión exitoso" });
+
+  } catch (err) {
+    console.error("Error al iniciar sesión:", err);
+    res.status(500).json({ message: "Error en el servidor" });
+  }
+};
 
 
 
@@ -157,4 +219,4 @@ const updateUserProgressUnified = async (req, res) => {
 
 
 
-module.exports = { createUser, getUsers, getUserById, deleteUser, updateUser, updateUserProgressUnified  };
+module.exports = { createUser, getUsers, getUserById, deleteUser, updateUser, updateUserProgressUnified,  login };

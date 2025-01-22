@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import UserInfo from './UserInfo';
 import '../css/HomePage.css';  // Importa el archivo CSS
@@ -12,7 +12,7 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const userId = "67869f7defd086ba28f87d41"; // Reemplázalo con el ID dinámico o de la sesión
+  const { userId } = useParams(); // Reemplázalo con el ID dinámico o de la sesión
 
   // Función para obtener los datos del usuario desde el backend
   const fetchUserData = async () => {
@@ -31,7 +31,7 @@ const HomePage = () => {
   }, []);  // Llamar a la función cuando el componente se monta
 
   const handleGameSelection = (gameMode) => {
-    navigate(`/game/${gameMode}`);
+    navigate(`/user/${userId}/game/${gameMode}`);
   };
 
   const handleShowUserInfo = () => {

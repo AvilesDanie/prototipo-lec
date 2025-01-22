@@ -13,7 +13,7 @@ const Game3 = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [timeLeft, setTimeLeft] = useState(30); // Temporizador de 30 segundos
-  const userId = "67869f7defd086ba28f87d41";
+  const { userId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -87,12 +87,16 @@ const Game3 = () => {
   
 
   const goToExerciseList = () => {
-    navigate('/game/game3');
+    navigate(`/user/${userId}/game/game3`);
   };
 
   const restartGame = () => {
     setGameResult(null);
     setTimeLeft(30); // Reiniciar el temporizador
+  };
+  const removeTripleBackticksContent = (str) => {
+    // Usamos una expresión regular para encontrar y eliminar contenido entre triple comillas
+    return str.replace(/```[^`]*```/g, '');
   };
 
   if (loading) return <p>Loading...</p>;
@@ -122,7 +126,7 @@ const Game3 = () => {
           <h1>{exercise?.name}</h1>
           <p>
             {<div>
-              <div dangerouslySetInnerHTML={{ __html: exercise.description }} />
+              <div dangerouslySetInnerHTML={{ __html: removeTripleBackticksContent(exercise.description) }} />
             </div> || "No Description Available"}
           </p>
           <p><strong>Tiempo restante: {timeLeft} segundos</strong></p>

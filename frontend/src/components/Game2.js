@@ -15,7 +15,7 @@ const Game2Exercise = () => {
   const [correctLine, setCorrectLine] = useState('');
   const [selectedOption, setSelectedOption] = useState('');
   const [gameResult, setGameResult] = useState(null); // Resultado del juego 
-  const userId = '67869f7defd086ba28f87d41'; // ID del usuario
+  const { userId } = useParams(); // ID del usuario
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -121,6 +121,11 @@ const Game2Exercise = () => {
     setGameResult(null);
     setSelectedOption('');
   };
+  const removeTripleBackticksContent = (str) => {
+    // Usamos una expresión regular para encontrar y eliminar contenido entre triple comillas
+    return str.replace(/```[^`]*```/g, '');
+};
+
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -146,7 +151,7 @@ const Game2Exercise = () => {
         <h1>{exerciseDetails?.name}</h1>
         <p>{<div>
       {/* Renderizamos el HTML usando dangerouslySetInnerHTML */}
-      <div dangerouslySetInnerHTML={{ __html: exerciseDetails.description }} />
+      <div dangerouslySetInnerHTML={{ __html: removeTripleBackticksContent(exerciseDetails.description) }} />
     </div> || "No Description Available"}</p>
       </div>
 
@@ -175,7 +180,7 @@ const Game2Exercise = () => {
             <p>¡Incorrecto! Intenta nuevamente.</p>
           )}
           <button onClick={restartGame}>Reintentar</button>
-          <button onClick={() => navigate('/game/game2')}>Volver a la lista de ejercicios</button>
+          <button onClick={() => navigate(`/user/${userId}/game/game2`)}>Volver a la lista de ejercicios</button>
         </div>
       )}
     </div>

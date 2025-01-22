@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
@@ -6,6 +8,15 @@ const userSchema = new Schema({
     type: String,
     required: true,
     unique: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true, // Contraseña cifrada del usuario
   },
   level: {
     type: Number,
@@ -32,9 +43,10 @@ const userSchema = new Schema({
   tagsWithMistakes: [
     {
       tag: String,
-      priority: { type: Number, default: 0 } // La prioridad de los ejercicios relacionados con este tag
-    }
-  ],  
+      priority: { type: Number, default: 0 }, // Prioridad de los ejercicios relacionados con este tag
+    },
+  ],
 });
+
 
 module.exports = mongoose.model('User', userSchema);

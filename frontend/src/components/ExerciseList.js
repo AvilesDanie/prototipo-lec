@@ -9,7 +9,7 @@ const ExerciseList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const userId = "67869f7defd086ba28f87d41"; // Reemplaza con un ID dinámico o autenticado
+  const { userId } =useParams(); // Reemplaza con un ID dinámico o autenticado
 
   useEffect(() => {
     const fetchExercises = async () => {
@@ -31,8 +31,14 @@ const ExerciseList = () => {
   }, [gameMode]);
 
   const handleExerciseSelect = (exerciseId) => {
-    navigate(`/game/${gameMode}/exercise/${exerciseId}`);
+    navigate(`/user/${userId}/game/${gameMode}/exercise/${exerciseId}`);
   };
+  
+  const removeTripleBackticksContent = (str) => {
+    // Usamos una expresión regular para encontrar y eliminar contenido entre triple comillas
+    return str.replace(/```[^`]*```/g, '');
+  };
+
 
   if (loading) return <p>Loading recommended exercises...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -46,7 +52,7 @@ const ExerciseList = () => {
             <h3>{exercise.name || "No Name Available"}</h3>
             <p>{<div>
       {/* Renderizamos el HTML usando dangerouslySetInnerHTML */}
-      <div dangerouslySetInnerHTML={{ __html: exercise.description }} />
+      <div dangerouslySetInnerHTML={{ __html: removeTripleBackticksContent(exercise.description) }} />
     </div> || "No Description Available"}</p>
             {exercise.priority > 0 && <p className="priority-high">Prioridad alta debido a errores en temas similares.</p>}
             <button onClick={() => handleExerciseSelect(exercise.codewarsId)}>Go to Exercise</button>
