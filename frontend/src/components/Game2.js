@@ -14,7 +14,7 @@ const Game2Exercise = () => {
   const [options, setOptions] = useState([]);
   const [correctLine, setCorrectLine] = useState('');
   const [selectedOption, setSelectedOption] = useState('');
-  const [gameResult, setGameResult] = useState(null); // Resultado del juego
+  const [gameResult, setGameResult] = useState(null); // Resultado del juego 
   const userId = '67869f7defd086ba28f87d41'; // ID del usuario
   const navigate = useNavigate();
 
@@ -83,27 +83,39 @@ const Game2Exercise = () => {
   const handleOptionSelect = async (option) => {
     setSelectedOption(option);
     if (option === correctLine) {
-      setGameResult('win');
       await handleGameCompletion(true);
     } else {
-      setGameResult('lose');
+      await handleGameCompletion(false); // Esto asegura que los tags incorrectos se actualicen.
     }
   };
+  
 
   const handleGameCompletion = async (isWin) => {
     try {
       const payload = {
         userId,
         exerciseId,
-        experiencePoints: isWin ? 100 : 0,
-        successful: isWin,
+        experiencePoints: isWin ? 100 : 0, // 100 puntos si gana
+        successful: isWin, // Determina si el intento fue exitoso
       };
-
-      await axios.put(`http://localhost:5000/api/users/progress-unified`, payload);
+  
+      console.log('Payload enviado:', payload);
+  
+      const response = await axios.put(`http://localhost:5000/api/users/progress-unified`, payload);
+  
+      console.log('Respuesta del backend:', response.data);
+  
+      if (isWin) {
+        setGameResult('win');
+      } else {
+        setGameResult('lose');
+      }
     } catch (err) {
-      console.error('Error al actualizar el progreso del usuario:', err);
+      console.error('Error al actualizar el progreso:', err);
+      alert('Ocurrió un error al actualizar el progreso. Por favor, intenta nuevamente.');
     }
   };
+  
 
   const restartGame = () => {
     setGameResult(null);
