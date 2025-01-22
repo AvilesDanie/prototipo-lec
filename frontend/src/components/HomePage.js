@@ -4,6 +4,7 @@ import axios from "axios";
 import UserInfo from './UserInfo';
 import '../css/HomePage.css';  // Importa el archivo CSS
 
+
 const HomePage = () => {
   const navigate = useNavigate();
   const [showUserInfo, setShowUserInfo] = useState(false);

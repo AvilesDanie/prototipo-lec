@@ -1,80 +1,65 @@
 /* ExerciseList.css */
-
-/* Contenedor principal */
 .exercise-list-container {
-    font-family: 'Arial', sans-serif;
-    margin: 20px;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  padding: 20px;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: white;
+  border-radius: 10px;
+  animation: fadeIn 1s ease-in-out;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px #000;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  background: #ffffff;
+  color: #333;
+  padding: 15px;
+  margin: 10px auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+li:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+button {
+  padding: 10px 20px;
+  background: #6a11cb;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #2575fc;
+}
+
+.priority-high {
+  color: red;
+  font-weight: bold;
+}
+
+/* Keyframes for fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  
-  /* Título principal */
-  .exercise-list-container h1 {
-    color: #333;
-    font-size: 2rem;
-    text-align: center;
-    margin-bottom: 20px;
+  to {
+    opacity: 1;
   }
-  
-  /* Estilo para la lista de ejercicios */
-  .exercise-list-container ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .exercise-list-container li {
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    padding: 15px;
-    transition: background-color 0.3s ease;
-  }
-  
-  /* Hover en los ejercicios */
-  .exercise-list-container li:hover {
-    background-color: #f1f1f1;
-  }
-  
-  /* Título de cada ejercicio */
-  .exercise-list-container li h3 {
-    font-size: 1.5rem;
-    color: #333;
-    margin-bottom: 10px;
-  }
-  
-  /* Descripción del ejercicio */
-  .exercise-list-container li p {
-    font-size: 1rem;
-    color: #666;
-    margin-bottom: 10px;
-  }
-  
-  /* Prioridad alta */
-  .exercise-list-container li .priority-high {
-    color: #d9534f; /* Rojo para prioridad alta */
-    font-weight: bold;
-  }
-  
-  /* Botón de selección de ejercicio */
-  .exercise-list-container li button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 20px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .exercise-list-container li button:hover {
-    background-color: #0056b3;
-  }
-  
-  .exercise-list-container li button:focus {
-    outline: none;
-  }
-  
+}

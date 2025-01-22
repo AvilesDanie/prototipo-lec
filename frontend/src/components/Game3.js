@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../css/Game3.css';  // Importar el archivo CSS
+import { Link } from 'react-router-dom';
 
 const Game3 = () => {
   const { exerciseId } = useParams();
@@ -86,50 +87,70 @@ const Game3 = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="game-container">
-      <div className="exercise-info">
-        <h1>{exercise?.name}</h1>
-        <p>{<div>
-      {/* Renderizamos el HTML usando dangerouslySetInnerHTML */}
-      <div dangerouslySetInnerHTML={{ __html: exercise.description }} />
-    </div> || "No Description Available"}</p>
-        <p><strong>Tiempo restante: {timeLeft} segundos</strong></p>
-      </div>
+ 
+    <div>
+      {/* NavBar interactivo */}
+      <link  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"rel="stylesheet"/>
+      <nav className="game-navbar">
+  <div className="logo">🎮 GameConsole</div>
+  <ul className="nav-links">
+    <li><Link to="#home"><i className="fas fa-home"></i> Inicio</Link></li>
+    <li><Link to="/"><i className="fas fa-gamepad"></i> Juegos</Link></li>
+    <li><Link to="/ranking"><i className="fas fa-trophy"></i> Ranking</Link></li>
+    <li><Link to="#profile"><i className="fas fa-user"></i> Perfil</Link></li>
+    <li><Link to="#settings"><i className="fas fa-cogs"></i> Configuración</Link></li>
+  </ul>
+</nav>
 
-      <div className="solutions">
-        <h2>Selecciona la solución correcta:</h2>
-        {solutions.map((solution, index) => (
-          <button
-            key={index}
-            className={`solution-button ${gameResult && solution === correctSolution ? 'correct' : ''}`}
-            onClick={() => handleButtonClick(solution)}
-            disabled={!!gameResult} // Desactiva los botones si ya hay resultado
-          >
-            {solution}
-          </button>
-        ))}
-      </div>
+      
 
-      {gameResult && (
-        <div className="result-modal">
-          {gameResult === 'win' ? (
-            <>
-              <p>¡Has ganado! Obtuviste {timeLeft > 15 ? 150 : 100} puntos de experiencia.</p>
-              <button onClick={goToExerciseList}>Volver a la lista de ejercicios</button>
-            </>
-          ) : gameResult === 'timeout' ? (
-            <>
-              <p>¡Tiempo agotado! Inténtalo de nuevo.</p>
-              <button onClick={restartGame}>Reintentar</button>
-            </>
-          ) : (
-            <>
-              <p>¡Has perdido! Inténtalo de nuevo.</p>
-              <button onClick={restartGame}>Reintentar</button>
-            </>
-          )}
+      {/* Contenido principal */}
+      <div className="game-container">
+        <div className="exercise-info">
+          <h1>{exercise?.name}</h1>
+          <p>
+            {<div>
+              <div dangerouslySetInnerHTML={{ __html: exercise.description }} />
+            </div> || "No Description Available"}
+          </p>
+          <p><strong>Tiempo restante: {timeLeft} segundos</strong></p>
         </div>
-      )}
+
+        <div className="solutions">
+          <h2>Selecciona la solución correcta:</h2>
+          {solutions.map((solution, index) => (
+            <button
+              key={index}
+              className={`solution-button ${gameResult && solution === correctSolution ? 'correct' : ''}`}
+              onClick={() => handleButtonClick(solution)}
+              disabled={!!gameResult} // Desactiva los botones si ya hay resultado
+            >
+              {solution}
+            </button>
+          ))}
+        </div>
+
+        {gameResult && (
+          <div className="result-modal">
+            {gameResult === 'win' ? (
+              <>
+                <p>¡Has ganado! Obtuviste {timeLeft > 15 ? 150 : 100} puntos de experiencia.</p>
+                <button onClick={goToExerciseList}>Volver a la lista de ejercicios</button>
+              </>
+            ) : gameResult === 'timeout' ? (
+              <>
+                <p>¡Tiempo agotado! Inténtalo de nuevo.</p>
+                <button onClick={restartGame}>Reintentar</button>
+              </>
+            ) : (
+              <>
+                <p>¡Has perdido! Inténtalo de nuevo.</p>
+                <button onClick={restartGame}>Reintentar</button>
+              </>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

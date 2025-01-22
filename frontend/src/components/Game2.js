@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../css/Game2.css';  // Importar el archivo CSS
-
+import { Link } from 'react-router-dom';
 const Game2Exercise = () => {
   const { exerciseId } = useParams(); // Captura el codewarsId desde la URL
   const [exercise, setExercise] = useState(null);
@@ -114,6 +114,21 @@ const Game2Exercise = () => {
   if (error) return <p>{error}</p>;
 
   return (
+
+<div>
+      {/* NavBar interactivo */}
+      <link  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"rel="stylesheet"/>
+      <nav className="game-navbar">
+  <div className="logo">🎮 GameConsole</div>
+  <ul className="nav-links">
+    <li><Link to="#home"><i className="fas fa-home"></i> Inicio</Link></li>
+    <li><Link to="/"><i className="fas fa-gamepad"></i> Juegos</Link></li>
+    <li><Link to="/ranking"><i className="fas fa-trophy"></i> Ranking</Link></li>
+    <li><Link to="#profile"><i className="fas fa-user"></i> Perfil</Link></li>
+    <li><Link to="#settings"><i className="fas fa-cogs"></i> Configuración</Link></li>
+  </ul>
+</nav>
+    
     <div className="exercise-container">
       <div className="exercise-info">
         <h1>{exerciseDetails?.name}</h1>
@@ -151,6 +166,7 @@ const Game2Exercise = () => {
           <button onClick={() => navigate('/game/game2')}>Volver a la lista de ejercicios</button>
         </div>
       )}
+    </div>
     </div>
   );
 };

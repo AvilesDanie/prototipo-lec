@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom'; 
-import '../css/Game1.css';  // Importar el archivo CSS
-
+import { useParams, useNavigate } from 'react-router-dom';
+import '../css/Game1.css'; // Importar el archivo CSS
+import { Link } from 'react-router-dom';
 const Game1Exercise = () => {
   const { exerciseId } = useParams(); // Captura el codewarsId desde la URL
   const [exercise, setExercise] = useState(null);
   const [exerciseDetails, setExerciseDetails] = useState(null);
-  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lines, setLines] = useState([]);
   const [orderedLines, setOrderedLines] = useState([]);
-  const [gameResult, setGameResult] = useState(null); 
-  const userId = "67869f7defd086ba28f87d41"; // ID del usuario (puedes obtenerlo dinámicamente)
-  const navigate = useNavigate();  // Usamos useNavigate para la navegación
+  const [gameResult, setGameResult] = useState(null);
 
+  const userId = "67869f7defd086ba28f87d41"; // ID del usuario (ajustar si es necesario)
+  const navigate = useNavigate(); // Usamos useNavigate para la navegación
+
+  // Obtener detalles del ejercicio y usuario
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -25,9 +26,6 @@ const Game1Exercise = () => {
         const exerciseDetailsRes = await axios.get(`http://localhost:5000/api/codewars/challenge/${exerciseId}`);
         setExerciseDetails(exerciseDetailsRes.data);
 
-        const userRes = await axios.get(`http://localhost:5000/api/users/${userId}`);
-        setUser(userRes.data);
-
         setLoading(false);
       } catch (err) {
         setError('Error al obtener los datos');
@@ -36,43 +34,19 @@ const Game1Exercise = () => {
     };
 
     fetchData();
-  }, [exerciseId, userId]);
+  }, [exerciseId]);
 
+  // Configurar líneas del código
   useEffect(() => {
     if (exercise && exercise.answer && exercise.answer.python) {
       const codeLines = exercise.answer.python.split('\n');
-      const shuffledLines = [...codeLines].sort(() => Math.random() - 0.5); 
+      const shuffledLines = [...codeLines].sort(() => Math.random() - 0.5);
       setLines(shuffledLines);
-      setOrderedLines(codeLines); 
+      setOrderedLines(codeLines);
     }
   }, [exercise]);
 
-  const handleGameCompletion = async (isWin) => {
-    try {
-      const payload = {
-        userId, 
-        exerciseId, 
-        experiencePoints: isWin ? 100 : 0, 
-        successful: isWin, 
-      };
-
-      console.log('Payload enviado al backend:', payload); 
-
-      const response = await axios.put(`http://localhost:5000/api/users/progress-unified`, payload);
-
-      console.log('Respuesta del backend:', response.data); 
-
-      if (isWin) {
-        setGameResult('win');
-      } else {
-        setGameResult('lose');
-      }
-    } catch (err) {
-      console.error('Error al actualizar el progreso del usuario:', err);
-      console.log('Detalles del error:', err.response?.data || err.message);
-    }
-  };
-
+  // Mover líneas de código
   const handleLineMove = (fromIndex, toIndex) => {
     const updatedLines = [...lines];
     const [movedLine] = updatedLines.splice(fromIndex, 1);
@@ -80,40 +54,65 @@ const Game1Exercise = () => {
     setLines(updatedLines);
   };
 
+  // Verificar respuesta del usuario
   const checkAnswer = () => {
     const userCode = lines.join('\n');
     const correctCode = orderedLines.join('\n');
     return userCode === correctCode;
   };
 
-  const goToExerciseList = () => {
-    navigate('/game/game1');  
+  // Manejo del resultado del juego
+  const handleGameCompletion = async (isWin) => {
+    try {
+      const payload = {
+        userId,
+        exerciseId,
+        experiencePoints: isWin ? 100 : 0,
+        successful: isWin,
+      };
+
+      await axios.put(`http://localhost:5000/api/users/progress-unified`, payload);
+
+      setGameResult(isWin ? 'win' : 'lose');
+    } catch (err) {
+      console.error('Error al actualizar el progreso:', err);
+    }
   };
 
+  // Funciones de navegación
+  const goToExerciseList = () => navigate('/game/game1');
   const restartGame = () => {
     setGameResult(null);
-    setLines([...orderedLines].sort(() => Math.random() - 0.5));  
+    setLines([...orderedLines].sort(() => Math.random() - 0.5));
   };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
-  if (!exerciseDetails) {
-    return <p>No details available for this exercise.</p>;
-  }
-
   return (
+    <div>
+      {/* NavBar interactivo */}
+      <link  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"rel="stylesheet"/>
+      <nav className="game-navbar">
+  <div className="logo">🎮 GameConsole</div>
+  <ul className="nav-links">
+    <li><Link to="/"><i className="fas fa-home"></i> Inicio</Link></li>
+    <li><Link to=" "><i className="fas fa-gamepad"></i> Juegos</Link></li>
+    <li><Link to="/ranking"><i className="fas fa-trophy"></i> Ranking</Link></li>
+    <li><Link to="#profile"><i className="fas fa-user"></i> Perfil</Link></li>
+    <li><Link to="#settings"><i className="fas fa-cogs"></i> Configuración</Link></li>
+  </ul>
+</nav>
     <div className="exercise-container">
       <div className="exercise-info">
-        <h1>{exerciseDetails.name}</h1>
-        <p>{<div>
-      {/* Renderizamos el HTML usando dangerouslySetInnerHTML */}
-      <div dangerouslySetInnerHTML={{ __html: exerciseDetails.description }} />
-    </div> || "No Description Available"}</p>
+        <h1>{exerciseDetails?.name || 'Exercise'}</h1>
+        <p>
+          <div dangerouslySetInnerHTML={{ __html: exerciseDetails?.description || 'No Description Available' }} />
+        </p>
       </div>
 
       <div className="exercise-code">
-        <h2>Python Code</h2>
+        <h2>Arrange the Code</h2>
         <div className="code-lines">
           {lines.map((line, index) => (
             <div
@@ -134,17 +133,17 @@ const Game1Exercise = () => {
       </div>
 
       <div className="completion-button">
-        <button 
+        <button
           onClick={() => {
             if (checkAnswer()) {
-              handleGameCompletion(true);  
+              handleGameCompletion(true);
             } else {
-              handleGameCompletion(false);  
+              handleGameCompletion(false);
               alert('Please try again! The code is not correct.');
             }
           }}
         >
-          Completar
+          Submit
         </button>
       </div>
 
@@ -152,18 +151,19 @@ const Game1Exercise = () => {
         <div className="result-modal">
           {gameResult === 'win' ? (
             <>
-              <p>¡Has ganado! ¿Qué te gustaría hacer ahora?</p>
+              <p>🎉 ¡Has ganado! 🎉</p>
               <button onClick={goToExerciseList}>Volver a la lista de ejercicios</button>
             </>
           ) : (
             <>
-              <p>¡Has perdido! ¿Qué te gustaría hacer ahora?</p>
-              <button onClick={restartGame}>Repetir</button>
+              <p>😢 ¡Has perdido! 😢</p>
+              <button onClick={restartGame}>Reintentar</button>
               <button onClick={goToExerciseList}>Volver a la lista de ejercicios</button>
             </>
           )}
         </div>
       )}
+    </div>
     </div>
   );
 };

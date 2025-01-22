@@ -1,108 +1,198 @@
-/* Game3.css */
 
-/* Contenedor principal */
+/* Estilos para el Navbar */
+.game-navbar {
+  background-color: #282c34;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.game-navbar .logo {
+  font-size: 1.5rem;
+  color: #017797;
+  font-family: 'Arial', sans-serif;
+  font-weight: bold;
+  letter-spacing: 2px;
+  cursor: pointer;
+}
+
+.game-navbar .nav-links {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.game-navbar .nav-links li {
+  margin: 0 15px;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.game-navbar .nav-links li a {
+  color: #017797;
+  text-decoration: none;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+}
+
+.game-navbar .nav-links li a i {
+  margin-right: 8px;
+}
+
+.game-navbar .nav-links li:hover {
+  transform: scale(1.1);
+  color: #ffac33; /* Color de resaltado */
+}
+
+.game-navbar .nav-links li a:hover {
+  color: #ffac33; /* Color al pasar el mouse */
+}
+
+.game-navbar .nav-links li:active {
+  transform: scale(0.95);
+}
+
+/* Contenedor principal del juego */
 .game-container {
-    font-family: 'Arial', sans-serif;
-    padding: 20px;
-    background-color: #f4f4f9;
-    border-radius: 8px;
-    max-width: 1000px;
-    margin: 30px auto;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #74ebd5, #acb6e5);
+  color: #333;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Información del ejercicio */
+.exercise-info {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
+  animation: fadeIn 1.5s ease-out;
+}
+
+.exercise-info h1 {
+  font-size: 2rem;
+  color: #333;
+}
+
+.exercise-info p {
+  font-size: 1.2rem;
+  margin: 10px 0;
+}
+
+/* Botones de soluciones */
+.solutions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+
+.solution-button {
+  background: #fff;
+  border: 2px solid #4caf50;
+  border-radius: 10px;
+  padding: 10px 15px;
+  font-size: 1rem;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  transform: scale(1);
+}
+
+.solution-button:hover {
+  background: #4caf50;
+  color: #fff;
+  transform: scale(1.1);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.solution-button.correct {
+  background: #4caf50;
+  color: rgb(2, 137, 0);
+  animation: correctPulse 1s infinite;
+}
+
+.solution-button:disabled {
+  cursor: not-allowed;
+  background: #ccc;
+  color: #666;
+  border-color: #999;
+}
+
+/* Modal de resultados */
+.result-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  color: black;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  animation: popIn 0.5s ease-out;
+}
+
+.result-modal p {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+.result-modal button {
+  background: #4caf50;
+  color: rgb(255, 255, 255);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.result-modal button:hover {
+  background: #45a049;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
   }
-  
-  /* Información del ejercicio (título, descripción y temporizador) */
-  .exercise-info {
-    text-align: center;
-    margin-bottom: 30px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .exercise-info h1 {
-    font-size: 2rem;
-    color: #333;
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
   }
-  
-  .exercise-info p {
-    font-size: 1rem;
-    color: #666;
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
-  
-  .exercise-info p strong {
-    font-size: 1.2rem;
-    color: #000;
+}
+
+@keyframes correctPulse {
+  0%, 100% {
+    box-shadow: 0 0 5px #4caf50, 0 0 15px #4caf50;
   }
-  
-  /* Botones de soluciones */
-  .solutions {
-    text-align: center;
-    margin-top: 30px;
+  50% {
+    box-shadow: 0 0 15px #4caf50, 0 0 30px #4caf50;
   }
-  
-  .solution-button {
-    background-color: #007bff;
-    color: white;
-    font-size: 1.2rem;
-    padding: 15px 30px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 10px;
-    transition: background-color 0.3s ease;
-    width: 80%;
-    max-width: 400px;
-  }
-  
-  .solution-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .solution-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-  
-  .solution-button.correct {
-    background-color: #28a745;
-  }
-  
-  .solution-button.correct:hover {
-    background-color: #218838;
-  }
-  
-  /* Modal de resultado */
-  .result-modal {
-    text-align: center;
-    margin-top: 30px;
-  }
-  
-  .result-modal p {
-    font-size: 1.25rem;
-    color: #333;
-    margin-bottom: 20px;
-  }
-  
-  .result-modal button {
-    background-color: #007bff;
-    color: white;
-    font-size: 1rem;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 5px;
-    transition: background-color 0.3s ease;
-  }
-  
-  .result-modal button:hover {
-    background-color: #0056b3;
-  }
-  
-  .result-modal button:focus {
-    outline: none;
-  }
-  
-  .result-modal button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-  
+}
