@@ -106,7 +106,7 @@ const Game3 = () => {
       <nav className="game-navbar">
   <div className="logo">🎮 GameConsole</div>
   <ul className="nav-links">
-    <li><Link to="#home"><i className="fas fa-home"></i> Inicio</Link></li>
+    <li><Link to="/"><i className="fas fa-home"></i> Inicio</Link></li>
     <li><Link to="/"><i className="fas fa-gamepad"></i> Juegos</Link></li>
     <li><Link to="/ranking"><i className="fas fa-trophy"></i> Ranking</Link></li>
     <li><Link to="#profile"><i className="fas fa-user"></i> Perfil</Link></li>
