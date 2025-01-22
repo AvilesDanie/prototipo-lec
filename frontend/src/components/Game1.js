@@ -86,10 +86,28 @@ const Game1Exercise = () => {
     setLines([...orderedLines].sort(() => Math.random() - 0.5));
   };
 
-  const removeTripleBackticksContent = (str) => {
+  /*const removeTripleBackticksContent = (str) => {
     // Usamos una expresión regular para encontrar y eliminar contenido entre triple comillas
     return str.replace(/```[^`]*```/g, '');
   };
+*/
+  
+// Función para limpiar la descripción
+const removeTripleBackticksContent = (description) => {
+  return description
+    .replace(/```[\s\S]*?```/g, '')  // Elimina bloques de código entre ```
+    .replace(/~~~[\s\S]*?~~~/g, '')  // Elimina bloques de código entre ~~~
+    .replace(/`[^`]+`/g, '')         // Elimina texto entre comillas invertidas (`example`)
+    .replace(/\*\*[^*]+\*\*/g, '')   // Elimina texto entre ** **
+    .replace(/\[.*?\]\(.*?\)/g, '')   // Elimina enlaces en formato [texto](url)
+    .replace(/####\s?.*/g, '')       // Elimina encabezados "####"
+    .replace(/- Task:.*|Examples:.*|Note:.*|Bash Note:.*|See "Sample Tests".*/gi, '')  // Filtra secciones irrelevantes
+    .replace(/\s+/g, ' ')            // Reduce espacios múltiples a uno solo
+    .trim();                         // Elimina espacios iniciales y finales
+};
+
+
+
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
