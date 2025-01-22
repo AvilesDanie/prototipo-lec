@@ -6,6 +6,7 @@ import ExerciseList from "./components/ExerciseList";
 import Game1 from "./components/Game1";
 import Game2 from "./components/Game2";
 import Game3 from "./components/Game3";
+import RankingPage from "./components/RankingPage";
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
         <Route path="/user/:userId/game/game1/exercise/:exerciseId" element={<Game1 />} />
         <Route path="/user/:userId/game/game2/exercise/:exerciseId" element={<Game2 />} />
         <Route path="/user/:userId/game/game3/exercise/:exerciseId" element={<Game3 />} />
+        <Route path="/user/:userId/ranking" element={<RankingPage />} />
       </Routes>
     </Router>
   );

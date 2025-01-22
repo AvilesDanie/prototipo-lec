@@ -41,7 +41,7 @@ const LoginRegister = () => {
             email: formData.email,
             password: formData.password, // Verifica que esta propiedad no esté vacía
             level: 1,
-            experiencePoints: 0,
+            experiencePoints: 1000,
             progress: 0
         });
         // Muestra el mensaje de éxito en la página
